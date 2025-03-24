@@ -1,6 +1,10 @@
 package tfekpi
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"fmt"
+	"strings"
+)
 
 type ProjectSummaryReport struct {
 	Project           string `json:"project"`
@@ -78,10 +82,38 @@ func (r ProjectSummaryReports) ToJSON() string {
 	return string(marshaled)
 }
 
+func (r ProjectSummaryReports) ToCSV() string {
+	var result strings.Builder
+	result.WriteString("Project,TotalWorkspaces,TotalResources,TotalJobs,SuccessfulJobs,FailedJobs,ResourceAdds,ResourceChanges,ResourceDestroys\n")
+
+	for _, report := range r {
+		row := fmt.Sprintf("%s,%d,%d,%d,%d,%d,%d,%d,%d\n",
+			report.Project, report.TotalWorkspaces, report.TotalResources,
+			report.TotalJobs, report.SucessfulJobs, report.FailedJobs,
+			report.ResourceAdds, report.RsourceChanges, report.ResourceDestrorys)
+		result.WriteString(row)
+	}
+	return result.String()
+}
+
 func (w WorkspaceSummaryReports) ToJSON() string {
 	marshaled, err := json.MarshalIndent(w, "", "   ")
 	if err != nil {
 		panic(err)
 	}
 	return string(marshaled)
+}
+
+func (r WorkspaceSummaryReports) ToCSV() string {
+	var result strings.Builder
+	result.WriteString("Project,Workspace,ResourceCount,TotalJobs,SuccessfulJobs,FailedJobs,ResourceAdds,ResourceChanges,ResourceDestroys\n")
+
+	for _, report := range r {
+		row := fmt.Sprintf("%s,%s,%d,%d,%d,%d,%d,%d,%d\n",
+			report.Project, report.Workspace, report.ResourceCount,
+			report.TotalJobs, report.SucessfulJobs, report.FailedJobs,
+			report.ResourceAdds, report.RsourceChanges, report.ResourceDestrorys)
+		result.WriteString(row)
+	}
+	return result.String()
 }
