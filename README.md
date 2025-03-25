@@ -6,6 +6,7 @@ A Go application that generates actionable metrics and reports from your Terrafo
 
 - **Project Summary Reports**: Aggregate metrics for each project including workspace count, resource totals, and job success rates
 - **Workspace Detail Reports**: Detailed metrics for individual workspaces including resource counts and job statistics
+- **Job Detail Reports**: Detailed metrics for individual jobs including resource counts and start and end times
 - **Job Performance Analysis**: Track successful vs failed jobs across your organization
 - **Resource Change Tracking**: Monitor resource additions, modifications, and deletions
 
