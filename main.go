@@ -20,10 +20,10 @@ func main() {
 		log.Fatal(err)
 	}
 
-	org := "mrcloudmustache"
+	org := "myorganization"
 	tfe := tfekpi.TFE{Client: *client, Org: org}
 	projects := tfekpi.LoadProjects(tfe)
 	// fmt.Println(projects.SummaryReport().ToJSON())
-	fmt.Println(projects.WorkspaceSummaryReport().ToJSON())
+	// fmt.Println(projects.WorkspaceSummaryReport().ToJSON())
 	fmt.Println(projects.JobSummaryReport().ToJSON())
 }
