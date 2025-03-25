@@ -34,6 +34,14 @@ type WorkspaceSummaryReport struct {
 
 type WorkspaceSummaryReports []WorkspaceSummaryReport
 
+type JobSummaryReport struct {
+	Project   string `json:"project"`
+	Workspace string `json:"workspace"`
+	Job
+}
+
+type JobSummaryReports []JobSummaryReport
+
 func (p Projects) SummaryReport() ProjectSummaryReports {
 	reports := []ProjectSummaryReport{}
 	for _, project := range p {
@@ -50,6 +58,7 @@ func (p Projects) SummaryReport() ProjectSummaryReports {
 			ResourceDestrorys: w.TotalResourceDestroys(),
 		})
 	}
+
 	return reports
 }
 
@@ -71,6 +80,24 @@ func (p Projects) WorkspaceSummaryReport() WorkspaceSummaryReports {
 		}
 
 	}
+
+	return reports
+}
+
+func (p Projects) JobSummaryReport() JobSummaryReports {
+	reports := JobSummaryReports{}
+	for _, project := range p {
+		for _, w := range project.Workspaces {
+			for _, j := range w.Jobs {
+				reports = append(reports, JobSummaryReport{
+					Project:   project.Name,
+					Workspace: w.Name,
+					Job:       j,
+				})
+			}
+		}
+	}
+
 	return reports
 }
 
@@ -79,6 +106,25 @@ func (r ProjectSummaryReports) ToJSON() string {
 	if err != nil {
 		panic(err)
 	}
+
+	return string(marshaled)
+}
+
+func (r WorkspaceSummaryReports) ToJSON() string {
+	marshaled, err := json.MarshalIndent(r, "", "   ")
+	if err != nil {
+		panic(err)
+	}
+
+	return string(marshaled)
+}
+
+func (r JobSummaryReports) ToJSON() string {
+	marshaled, err := json.MarshalIndent(r, "", "   ")
+	if err != nil {
+		panic(err)
+	}
+
 	return string(marshaled)
 }
 
@@ -93,15 +139,8 @@ func (r ProjectSummaryReports) ToCSV() string {
 			report.ResourceAdds, report.RsourceChanges, report.ResourceDestrorys)
 		result.WriteString(row)
 	}
-	return result.String()
-}
 
-func (w WorkspaceSummaryReports) ToJSON() string {
-	marshaled, err := json.MarshalIndent(w, "", "   ")
-	if err != nil {
-		panic(err)
-	}
-	return string(marshaled)
+	return result.String()
 }
 
 func (r WorkspaceSummaryReports) ToCSV() string {
@@ -115,5 +154,21 @@ func (r WorkspaceSummaryReports) ToCSV() string {
 			report.ResourceAdds, report.RsourceChanges, report.ResourceDestrorys)
 		result.WriteString(row)
 	}
+
+	return result.String()
+}
+
+func (r JobSummaryReports) ToCSV() string {
+	var result strings.Builder
+	result.WriteString("Project,Workspaces,ID,Status,Adds,Changes,Destroys,StartedAt,FinishedAt\n")
+
+	for _, report := range r {
+		row := fmt.Sprintf("%s,%s,%s,%s,%d,%d,%d,%s,%s\n",
+			report.Project, report.Workspace, report.ID,
+			report.Status, report.Adds, report.Changes,
+			report.Destroys, report.StartedAt, report.FinishedAt)
+		result.WriteString(row)
+	}
+
 	return result.String()
 }

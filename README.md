@@ -114,6 +114,35 @@ go run main.go
 ]
 ```
 
+#### Job Summary Report
+
+```json
+[
+   {
+      "project": "Default Project",
+      "workspace": "learn-terraform-versions",
+      "id": "apply-QPBEnxNgPo4r6naf",
+      "status": "finished",
+      "adds": 0,
+      "changes": 0,
+      "destroys": 2,
+      "started_at": "2023-10-08 19:19:53",
+      "finished_at": "2023-10-08 19:22:44"
+   },
+   {
+      "project": "Default Project",
+      "workspace": "learn-terraform-versions",
+      "id": "apply-FPnhjeqs8GjLbNJz",
+      "status": "finished",
+      "adds": 2,
+      "changes": 0,
+      "destroys": 0,
+      "started_at": "2023-10-08 19:03:57",
+      "finished_at": "2023-10-08 19:11:52"
+   },
+]
+```
+
 ## Architecture
 
 ### Core Components
@@ -171,51 +200,28 @@ Provides detailed metrics for each workspace:
 | `resource_changes` | Total resources modified across all jobs |
 | `resource_destroys` | Total resources destroyed across all jobs |
 
+### Job Summary Report
+
+Provides detailed metrics for each job:
+
+| Field | Description |
+|-------|-------------|
+| `project` | Project name |
+| `workspace` | Workspace name |
+| `id` | Identifier of the job |
+| `status` | Status of the job |
+| `adds` | Number of added resources |
+| `changes` | Number of changed resources |
+| `destroys` | Number of destoryed resources |
+| `started_at` |  Start date and time of the job|
+| `finished_at` | Finish date and time of the job|
+
 ## Use Cases
 
 - **Infrastructure Audit**: Track what resources are being provisioned and modified
 - **Team Performance**: Monitor job success rates to identify problematic areas
 - **Cost Analysis**: Track resource additions and deletions over time
 - **Compliance Reporting**: Generate evidence for compliance audits
-
-## Example: Generating Filtered Reports
-
-You can modify the application to filter reports by project or date range:
-
-```go
-// Example: Filter for specific projects
-filteredProjects := projects.FilterByName("Production")
-fmt.Println(filteredProjects.SummaryReport().ToJSON())
-```
-
-## Integrating with Other Tools
-
-### Export to CSV (Example Implementation)
-
-```go
-// Add to reports.go
-func (r ProjectSummaryReports) ToCSV() string {
-    var result strings.Builder
-    result.WriteString("Project,Workspaces,Resources,Jobs,Successful,Failed,Adds,Changes,Destroys\n")
-    
-    for _, report := range r {
-        row := fmt.Sprintf("%s,%d,%d,%d,%d,%d,%d,%d,%d\n",
-            report.Project, report.TotalWorkspaces, report.TotalResources,
-            report.TotalJobs, report.SucessfulJobs, report.FailedJobs,
-            report.ResourceAdds, report.RsourceChanges, report.ResourceDestrorys)
-        result.WriteString(row)
-    }
-    
-    return result.String()
-}
-```
-
-Example output:
-```
-Project,Workspaces,Resources,Jobs,Successful,Failed,Adds,Changes,Destroys
-Production Infrastructure,4,156,27,25,2,145,38,12
-Development Environment,2,42,15,13,2,42,21,5
-```
 
 ## Contributing
 

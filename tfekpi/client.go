@@ -3,6 +3,7 @@ package tfekpi
 import (
 	"context"
 	"log"
+	"time"
 
 	"github.com/hashicorp/go-tfe"
 )
@@ -26,6 +27,7 @@ func (t TFE) ListProjects() Projects {
 		})
 
 	}
+
 	return projects
 }
 
@@ -44,6 +46,7 @@ func (t TFE) ListProjectWorkspaces(project_id string) Workspaces {
 			ResourceCount: i.ResourceCount,
 		})
 	}
+
 	return workspaces
 }
 
@@ -52,6 +55,7 @@ func (t TFE) listWorkspacesRuns(workspace_id string) []*tfe.Run {
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	return response.Items
 }
 
@@ -69,11 +73,12 @@ func (t TFE) ListWorkspacesJobs(workspace_id string) Jobs {
 			Adds:       apply.ResourceAdditions,
 			Changes:    apply.ResourceChanges,
 			Destroys:   apply.ResourceDestructions,
-			StartedAt:  apply.StatusTimestamps.StartedAt.String(),
-			FinishedAt: apply.StatusTimestamps.FinishedAt.String(),
+			StartedAt:  apply.StatusTimestamps.StartedAt.Format(time.DateTime),
+			FinishedAt: apply.StatusTimestamps.FinishedAt.Format(time.DateTime),
 		})
 
 	}
+
 	return jobs
 }
 
@@ -88,5 +93,6 @@ func LoadProjects(client TFE) Projects {
 			projects[i].Workspaces[j].Jobs = jobs
 		}
 	}
+
 	return projects
 }
